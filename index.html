@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meowteor Protector</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./Assets/LogoAskimaya.png">
 
 </head>
 <body>
@@ -12,7 +13,8 @@
     
     <div id="startScreen" class="screen">
         <h1>Welcome to Meowteor Protector</h1>
-        <p>Press any key or tap anywhere to start</p>
+        <p>Click the button below to start the game</p>
+        <button id="startButton">Start Game</button>
     </div>
     <div class="overlay">
         <div>Score: <span id="score">0</span></div>
@@ -20,11 +22,13 @@
         <button id="pause">Pause</button>
     </div>
     <div class="game-over" id="gameOverScreen">
-        <h1>Game Over</h1>
-        <p>Your score: <span id="finalScore">0</span></p>
-        <button id="restart">Restart</button>
+        <div class="game-over-content">
+            <h1>Oh no, an asteroid hit our Earth :(. Lets try to protect it again.</h1>
+            <p>Your score: <span id="finalScore">0</span></p>
+            <button id="restart">Restart</button>
+        </div>
+        <img id="gameOverHero" src="Assets/GameOverHero.png" alt="Game Over Hero">
     </div>
-    
     <script src="game.js"></script>
 </body>
 </html>

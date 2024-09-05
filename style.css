@@ -20,30 +20,85 @@
             left: 10px;
             color: white;
             z-index: 10;
+            font-size: 24px;
         }
+
+        /* Add styles for the Start Game button */
+        #startButton {
+            font-family: 'Gaegu', sans-serif;
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: white; /* Example color, adjust as needed */
+            color: black; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #startButton:hover {
+            background-color: #ccc; /* Darker color on hover */
+        }
+
         #pause {
             font-family: 'Gaegu', sans-serif;
             position: absolute;
             top: 10px;
-            right: -1590px; /* Moved to the top right */
+            right: -1500px; /* Moved to the top right */
             padding: 5px 10px;
-            font-size: 16px;
+            font-size: 24px;
         }
-        .game-over {
+        /* Game Over Overlay */
+        #gameOverScreen {
             display: none;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            flex-direction: column;
             text-align: center;
         }
-        .game-over button {
-            margin-top: 20px;
+
+        /* Game Over Hero Image */
+        #gameOverHero {
+            width: 850px;
+            height: auto;
+        }
+
+        /* Game Over Content */
+        .game-over-content {
+            font-size: 24px;
+            color: white;
+        }
+
+        #restart {
             padding: 10px 20px;
             font-size: 16px;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 2.5px;
+            margin-top: -3.5px;
         }
-        .screen {
+
+        /* Hide game elements during start screen */
+        .overlay, #pause {
+            display: none;
+        }
+
+        /* Show game elements after start screen */
+        #gameCanvas, .overlay, #pause {
+            display: block;
+        }
+
+        /* Start Screen Styles */
+        #startScreen {
             position: absolute;
             top: 0;
             left: 0;
@@ -54,49 +109,72 @@
             background-repeat: no-repeat;
             color: white;
             display: flex;
-            flex-direction: column; /* Arrange items in a column */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             text-align: center;
-            z-index: 10; /* Ensure it is above other elements */
+            z-index: 10;
+            pointer-events: auto; /* Ensure pointer events are enabled */
         }
 
         #startScreen h1 {
-            font-size: 3em;
-            margin-bottom: 1px;
-            font-weight: 700;
-            font-style: normal; 
+            font-size: 96px;
+            margin-bottom: 20px;
+            -webkit-text-stroke: 2px black;
         }
 
         #startScreen p {
-            font-size: 1.5em;
+            font-size: 48px;
         }
 
+        /* Responsive Design */
         @media (max-width: 450px) {
             #gameCanvas {
                 width: 100%;
-                height: auto; /* Adjust height to maintain aspect ratio */
+                height: auto;
             }
 
             #pause {
-                font-size: 1em; /* Adjust font size for smaller screens */
-                padding: 8px 16px; /* Adjust padding */
+                font-size: 1em;
+                padding: 8px 16px;
+                margin-right: 1250px;
             }
 
             #restart {
-                font-size: 1em; /* Adjust font size for smaller screens */
-                padding: 8px 16px; /* Adjust padding */
+                font-size: 1em;
+                padding: 8px 16px;
             }
 
             #score, #highscore {
-                font-size: 1em; /* Adjust font size for smaller screens */
+                font-size: 1em;
+            }
+
+            #startScreen {
+                pointer-events: auto; /* Ensure pointer events are enabled */
             }
 
             #startScreen h1 {
-                font-size: 2em; /* Adjust heading size */
+                font-size: 48px;
+
             }
 
             #startScreen p {
-                font-size: 1em; /* Adjust paragraph size */
+                font-size: 24px;
+            }
+
+            #gameOverHero {
+                width: 450px;
+                height: auto;
+                margin-bottom: -300px;
+            }
+    
+            /* Game Over Content */
+            .game-over-content {
+                font-size: 16px;
+                color: white;
+            }
+
+            #restart{
+            font-size: 16px;
             }
         }

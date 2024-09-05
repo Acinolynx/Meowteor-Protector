@@ -10,6 +10,7 @@ const finalScoreElement = document.getElementById('finalScore');
 const pauseButton = document.getElementById('pause');
 const restartButton = document.getElementById('restart');
 const startScreen = document.getElementById('startScreen');
+const startButton = document.getElementById('startButton');
 
 let score = 0;
 let highscore = localStorage.getItem('highscore') || 0;
@@ -28,6 +29,16 @@ const heroImage = new Image();
 heroImage.src = 'Assets/Character.png';
 const meteorImage = new Image();
 meteorImage.src = 'Assets/Meteor.png';
+
+// Load audio files
+const backgroundMusic = new Audio('Assets/Background.mp3');
+const startSound = new Audio('Assets/Start.mp3');
+const destroySound = new Audio('Assets/Destroy.mp3');
+const gameOverSound = new Audio('Assets/GameOver.mp3');
+
+// Loop background music
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.5; // Adjust volume if needed
 
 // Set initial highscore
 highscoreElement.textContent = highscore;
@@ -114,6 +125,8 @@ function detectCollision(meteor) {
         meteor.x + meteor.width > hero.x &&
         meteor.x < hero.x + hero.width
     ) {
+        destroySound.play(); // Play destruction sound
+        destroySound.volume = 0.5; // Lower volume
         return true;
     }
 
@@ -165,8 +178,14 @@ function updateGame() {
 }
 
 function handleGameOver() {
+    backgroundMusic.pause(); // Stop background music
+    gameOverSound.play(); // Play game over sound
+    gameOverSound.volume = 0.5; //lower volume
     finalScoreElement.textContent = score;
     gameOverScreen.style.display = 'block';
+
+    // Display game over screen
+    document.getElementById('gameOverScreen').style.display = 'flex';
 
     if (score > highscore) {
         highscore = score;
@@ -176,6 +195,10 @@ function handleGameOver() {
 }
 
 function resetGame() {
+    gameOverSound.pause(); // Stop game over sound if it was playing
+    gameOverSound.currentTime = 0; // Reset game over sound
+    backgroundMusic.currentTime = 0; // Reset background music
+    backgroundMusic.play(); // Play background music again
     score = 0;
     scoreElement.textContent = score;
     meteors = [];
@@ -191,26 +214,98 @@ function initGame() {
 
 function startGame() {
     startScreen.style.display = 'none';
+    backgroundMusic.play(); // Start background music
     initGame();
 }
 
 // Show the start screen and set up event listeners
 function showStartScreen() {
+    startSound.play();
+
     startScreen.style.display = 'flex';
-    document.addEventListener('keydown', startGameOnce, { once: true });
-    canvas.addEventListener('touchstart', startGameOnce, { once: true });
+
+    // Hide game elements
+    document.querySelector('.overlay').style.display = 'none';
+
+    startButton.addEventListener('click', startGameOnce);
 }
 
 function startGameOnce() {
+
+    // Hide the start screen and show the game canvas
+    startScreen.style.display = 'none';
+
+    // Show game elements
+    document.querySelector('.overlay').style.display = 'block';
+    document.querySelector('#pause').style.display = 'block';
+
+
+    // Render the game scene (background, Earth, hero, etc.) before the countdown
+    drawInitialGameScreen();
+
+    // Start the countdown before starting the game
+    startCountdown(() => {
+        backgroundMusic.play(); // Start background music after countdown
+        updateGame(); // Now start the game loop
+    });
+
+    // Remove the event listeners to avoid triggering the game multiple times
     document.removeEventListener('keydown', startGameOnce);
     canvas.removeEventListener('touchstart', startGameOnce);
-    startGame();
+}
+
+function drawInitialGameScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw background, Earth, hero, and other game elements
+    drawBackground();
+    drawEarth();
+    hero = new Hero(); // Initialize the hero character
+    hero.draw(); // Draw the hero on screen
+
+    // Optionally, draw any static meteors or initial game state here
+    meteors.forEach((meteor) => meteor.draw());
+}
+
+function startCountdown(callback) {
+    const countdownText = document.createElement('div');
+    countdownText.style.position = 'absolute';
+    countdownText.style.top = '50%';
+    countdownText.style.left = '50%';
+    countdownText.style.transform = 'translate(-50%, -50%)';
+    countdownText.style.fontSize = '48px';
+    countdownText.style.color = '#FFFFFF';
+    countdownText.style.textAlign = 'center';
+    countdownText.style.zIndex = '10'; // Ensure it's above the canvas
+    document.body.appendChild(countdownText);
+
+    // Countdown messages
+    const messages = ['Are you ready?', '3', '2', '1', 'Protect the Earth!'];
+
+    let index = 0;
+    const countdownInterval = setInterval(() => {
+        countdownText.textContent = messages[index];
+        index++;
+
+        if (index === messages.length) {
+            setTimeout(() => { // Add a slight delay before clearing
+                clearInterval(countdownInterval);
+                document.body.removeChild(countdownText);
+                callback(); // Start the game after countdown
+            }, 500); // 0.5-second delay
+        }
+    }, 1000); // 1-second interval between each message
 }
 
 pauseButton.addEventListener('click', () => {
     gamePaused = !gamePaused;
     pauseButton.textContent = gamePaused ? 'Resume' : 'Pause';
-    if (!gamePaused) updateGame();
+    if (gamePaused) {
+        backgroundMusic.pause(); // Pause music when the game is paused
+    } else {
+        backgroundMusic.play(); // Resume music when the game is resumed
+        updateGame(); // Continue updating the game if not paused
+    }
 });
 
 restartButton.addEventListener('click', resetGame);
@@ -244,8 +339,8 @@ canvas.addEventListener('touchend', () => {
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    // Optionally, you might want to reset or reinitialize game elements
-    // resetGame();
+    // Adjust game elements if necessary
+    drawInitialGameScreen();
 });
 
 showStartScreen();
